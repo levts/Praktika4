@@ -1,0 +1,48 @@
+name: simple-ci
+run-name: ${{ github.actor }} is doing GitHub Actions
+on: [push]
+jobs:
+  simple-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python3 -m pip install -U pip &&
+          pip install -U pytest coverage
+      - name: Test programm
+        run: |
+          coverage run -m pytest pr4_pytest.py
+      - run: |
+          python3 pr4.py
+      - run: if cmp -s res_pr4_test.txt res_pr4_test_et.txt; 
+          then echo "Test passed";
+          else exit 1;
+          fi
+        shell: sh
+      - name: Coveral analise
+        run: |
+          coverage lcov
+      - uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage.lcov
+
+        
+
+  code_analise:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.organization=konstantin-minachkin
+            -Dsonar.projectKey=Konstantin-Minachkin_UIvPRPO
+            -Dsonar.sources=.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
