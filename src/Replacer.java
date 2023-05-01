@@ -71,3 +71,19 @@ public class Replacer
         }
 
     }
+    static void Replace() {
+        Pattern pp = Pattern.compile("(\\s)*\\d(\\s)*");
+        Matcher mm,mNext;
+
+        allText=allText.replaceAll("\\s[О|о]дин|\\s[О|о]дн..]", " 1 ");
+        allText=allText.replaceAll("\\sдв.", " 2");
+        allText=allText.replaceAll("\\s[Т|т]ри|\\s[Т|т]рем.|\\s[Т|т]рё.", " 3");
+        allText=allText.replaceAll("\\s([Ч|ч]етырьмя)|([Ч|ч]етыре)|([Ч|ч]етырё(\\S)?)|(\\s[С|с]оро)", " 4");
+        allText=allText.replaceAll("\\sпят.", " 5");
+        allText=allText.replaceAll("\\sшест.", " 6");
+        allText=allText.replaceAll("\\sсем.", " 7");
+        allText=allText.replaceAll("\\s[В|в]ос.м.", " 8");
+        allText=allText.replaceAll("\\sдевя..", " 9");
+
+        Pattern p = Pattern.compile("(\\dнадцат..|\\dадцат..)+");
+        Matcher m = p.matcher(allText);
