@@ -87,3 +87,96 @@ public class Replacer
 
         Pattern p = Pattern.compile("(\\dнадцат..|\\dадцат..)+");
         Matcher m = p.matcher(allText);
+        while (m.find()){
+            allText=allText.replace(m.group(), "1" + m.group().substring(0, 1) + " ");
+        }
+
+        p = Pattern.compile("(\\dдцат..)|(4к(\\S)*.)|(\\dдесят..)");
+        m = p.matcher(allText);
+        while (m.find()){
+            mm = pp.matcher(m.group());
+            if (!mm.find())
+            {allText=allText.replace(m.group()," 10");}
+            else {
+                allText = allText.replace(m.group(), m.group().substring(0, 1)+"0");
+            }
+        }
+
+        p = Pattern.compile("([(\\s)|(\\d)]с.?т(\\S)*\\s)");
+        m = p.matcher(allText);
+        while (m.find()){
+            mm = pp.matcher(m.group());
+            if (!mm.find())
+            {allText=allText.replace(m.group()," 100");}
+            else {
+                allText = allText.replace(m.group(), m.group().substring(0, 1)+"00");
+            }
+        }
+
+        Pattern p1 = Pattern.compile("[1-9]0[1-9]");
+        Pattern p2 = Pattern.compile("[1-9]00[1-9]\\d");
+        Pattern p3 = Pattern.compile("[1-9]00[1-9]\\s");
+        m = p1.matcher(allText);
+        while (m.find()){
+            {allText=allText.replace(m.group(),m.group().substring(0,1)+m.group().substring(2, 3));}
+        }
+        m = p2.matcher(allText);
+        while (m.find()){
+            {allText=allText.replace(m.group(),m.group().substring(0,1)+m.group().substring(3,5));}
+        }
+        m = p3.matcher(allText);
+        while (m.find()){
+            {allText=allText.replace(m.group(),m.group().substring(0,1)+m.group().substring(2,5));}
+        }
+
+        p = Pattern.compile("(\\d)+[a-zA-Zа-яА-Я]");
+        m = p.matcher(allText);
+        while (m.find()){
+            {allText=allText.replace(m.group(),m.group().substring(0,m.group().length()-1)+" "+m.group().substring(m.group().length()-1, m.group().length()));}
+        }
+
+        p = Pattern.compile("(.ысяч(\\S)*)|(.иллион(\\S)*)");
+        m = p.matcher(allText);
+        while (m.find()){
+            {allText=allText.replace(m.group(),"");}
+        }
+    }
+
+    static public void MakeReplacedFile(File file)	{
+        try	    {
+
+            if (!file.exists())    	{
+                file.createNewFile();
+            }
+
+            if (!file.canRead())   	{
+                throw new IllegalArgumentException("File cannot be written: " + file);
+            }
+
+            if (!file.isFile())   	{
+                throw new IllegalArgumentException("Should not be a directory: " + file);
+            }
+            file.delete();
+            file.createNewFile();
+            FileOutputStream fis = new FileOutputStream(file);
+            OutputStreamWriter out = new OutputStreamWriter(fis, _encoding);
+            BufferedWriter output =  new BufferedWriter(out);
+            try   	{
+                output.append(allText);
+            }
+
+            finally    	{
+                output.close();
+            }
+        }
+        catch (FileNotFoundException ex)    {
+            System.out.println("File does not exist: " + file);
+        }
+        catch(IllegalArgumentException ex)    {
+            System.out.println(ex.getMessage());
+        }
+        catch (Exception ex)    {
+            ex.printStackTrace();
+        }
+    }
+}
